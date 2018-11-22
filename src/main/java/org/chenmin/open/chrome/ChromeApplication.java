@@ -41,43 +41,43 @@ public class ChromeApplication {
 //        String port="32231";
 //        driver.executePhantomJS("phantom.setProxy('"+host+"', "+port+")");
 
-        String  phantomScript =
-        "var url =  'http://www.cnblogs.com/';" +
-                "var page = this; page.onResourceReceived = function(response) {" +
-                "if (response.stage !== \"end\" || response.url != url) " +
-                "return;" +
-                " console.log('##### ' + response.id + ' ##### ' + response.url + ' ##### ' + response.stage + ' ##### ' + response.status + ' ##### ' + response.statusText + ' #####');" +
-                " };";
-        String as = "page.onResourceRequested = function(requestData, request) {\n" +
-                "    if ((/http:\\/\\/.+?\\.css/gi).test(requestData['url']) || requestData.headers['Content-Type'] == 'text/css') {\n" +
-                "        console.log('The url of the request is matching. Aborting: ' + requestData['url']);\n" +
-                "        request.abort();\n" +
-                "    }\n" +
-                "};";
-        String baidu="var page = require('webpage').create();\n" +
-//                "page.onResourceRequested = function(requestData, request) {\n" +
+//        String  phantomScript =
+//        "var url =  'http://www.cnblogs.com/';" +
+//                "var page = this; page.onResourceReceived = function(response) {" +
+//                "if (response.stage !== \"end\" || response.url != url) " +
+//                "return;" +
+//                " console.log('##### ' + response.id + ' ##### ' + response.url + ' ##### ' + response.stage + ' ##### ' + response.status + ' ##### ' + response.statusText + ' #####');" +
+//                " };";
+//        String as = "page.onResourceRequested = function(requestData, request) {\n" +
 //                "    if ((/http:\\/\\/.+?\\.css/gi).test(requestData['url']) || requestData.headers['Content-Type'] == 'text/css') {\n" +
 //                "        console.log('The url of the request is matching. Aborting: ' + requestData['url']);\n" +
 //                "        request.abort();\n" +
 //                "    }\n" +
-//                "};"+
-                "page.open('http://www.baidu.com', function() {\n" +
-                "    setTimeout(function() {\n" +
-                "        page.render('baidu.png');\n" +
-                "        phantom.exit();\n" +
-                "    }, 200);\n" +
-                "});";
-//        driver.executePhantomJS(phantomScript);
-//        driver.executePhantomJS(as);
-//        driver.executePhantomJS(baidu);
-//        String ass = "console.log('using PhantomJS version ' +\n" +
-//                "  phantom.version.major + '.' +\n" +
-//                "  phantom.version.minor + '.' +\n" +
-//                "  phantom.version.patch);";
-//        driver.executePhantomJS(ass);
-
-        Object result  = driver.executePhantomJS(
-                "  console.log('Hello world!')"  );
+//                "};";
+//        String baidu="var page = require('webpage').create();\n" +
+////                "page.onResourceRequested = function(requestData, request) {\n" +
+////                "    if ((/http:\\/\\/.+?\\.css/gi).test(requestData['url']) || requestData.headers['Content-Type'] == 'text/css') {\n" +
+////                "        console.log('The url of the request is matching. Aborting: ' + requestData['url']);\n" +
+////                "        request.abort();\n" +
+////                "    }\n" +
+////                "};"+
+//                "page.open('http://www.baidu.com', function() {\n" +
+//                "    setTimeout(function() {\n" +
+//                "        page.render('baidu.png');\n" +
+//                "        phantom.exit();\n" +
+//                "    }, 200);\n" +
+//                "});";
+////        driver.executePhantomJS(phantomScript);
+////        driver.executePhantomJS(as);
+////        driver.executePhantomJS(baidu);
+////        String ass = "console.log('using PhantomJS version ' +\n" +
+////                "  phantom.version.major + '.' +\n" +
+////                "  phantom.version.minor + '.' +\n" +
+////                "  phantom.version.patch);";
+////        driver.executePhantomJS(ass);
+//
+//        Object result  = driver.executePhantomJS(
+//                "  console.log('Hello world!')"  );
         return driver;
     }
 
@@ -160,8 +160,8 @@ public class ChromeApplication {
 
         SpringApplication.run(ChromeApplication.class, args);
 //        WebDriver  driver = getChrome();
-//        WebDriver  driver = getPhantomjs();
-        WebDriver  driver = getLocalPhantomjs();
+        WebDriver  driver = getPhantomjs();
+//        WebDriver  driver = getLocalPhantomjs();
 
 
 
@@ -170,6 +170,18 @@ public class ChromeApplication {
         try {
             driver.manage().window().maximize();
 //            driver.get("http://2018.ip138.com/ic.asp");
+//            driver.get("http://www.baidu.com");
+////            JavascriptExecutor jse = (JavascriptExecutor)driver;
+//////            jse.executeScript("console.log('chenmin');");
+//////            String asa = "var jquery = document.createElement('script');  \n" +
+//////                    "jquery.src = 'https://code.jquery.com/jquery-3.3.1.min.js';\n" +
+//////                    "document.getElementsByTagName('head')[0].appendChild(jquery);\n";
+//////            jse.executeScript(asa);
+////            Thread.sleep(3000);
+////            String asa2 = "$(document).ready(function(){\n" +
+////                    "  $(\"body\").append(\"123\");\n" +
+////                    "});";
+////            jse.executeScript(asa2);
 //        WebDriverWait wait = new WebDriverWait(driver, 30);
 //        driver.get("http://2018.ip138.com/ic.asp");
 //        driver.get("http://www.baidu.com");
@@ -179,25 +191,62 @@ public class ChromeApplication {
 //            System.out.println(driver.getPageSource());
 //            driver.get("https://www.baidu.com/s?wd=ip");
 //香草开始
-//             driver.get("https://www.vanilla-air.com/hk/");
-//            //最大化浏览器窗口
-//            driver.manage().window().maximize();
-//            driver.findElement(By.id("oneWay")).click();
-//            driver.findElement(By.cssSelector("input.triggerDropdownMenus.startPlacement.validationInvalid")).click();
-//            Thread.sleep(1000);
-//            driver.findElement(By.xpath("//div[@id='reservation_point_select']/div[2]/div/ul/li[9]")).click();
-//            Thread.sleep(1000);
-//            driver.findElement(By.xpath("//div[@id='reservation_point_select']/div[3]/div/ul/li")).click();
-//            driver.findElement(By.id("edit-traveldate1-datepicker-popup-0")).click();
-//            driver.findElement(By.id("edit-traveldate1-datepicker-popup-0")).clear();
-//            driver.findElement(By.id("edit-traveldate1-datepicker-popup-0")).sendKeys("2018/12/04");
-//            driver.findElement(By.id("oneWay")).click();
-//            driver.findElement(By.id("edit-submit-ticket")).click();
+             driver.get("https://www.vanilla-air.com/hk/");
+            //最大化浏览器窗口
+            driver.manage().window().maximize();
+            driver.findElement(By.id("oneWay")).click();
+            driver.findElement(By.cssSelector("input.triggerDropdownMenus.startPlacement.validationInvalid")).click();
+            Thread.sleep(1000);
+            driver.findElement(By.xpath("//div[@id='reservation_point_select']/div[2]/div/ul/li[9]")).click();
+            Thread.sleep(1000);
+            driver.findElement(By.xpath("//div[@id='reservation_point_select']/div[3]/div/ul/li")).click();
+            driver.findElement(By.id("edit-traveldate1-datepicker-popup-0")).click();
+            driver.findElement(By.id("edit-traveldate1-datepicker-popup-0")).clear();
+            driver.findElement(By.id("edit-traveldate1-datepicker-popup-0")).sendKeys("2018/12/04");
+            driver.findElement(By.id("oneWay")).click();
+            driver.findElement(By.id("edit-submit-ticket")).click();
 //
-////            Thread.sleep(5000);
-//            driver.findElement(By.cssSelector("div.vnl-search-submit > a")).click();
+//            Thread.sleep(5000);
+            driver.findElement(By.cssSelector("div.vnl-search-submit > a")).click();
             Thread.sleep(3000);
-//            screen((TakesScreenshot) driver);
+            JavascriptExecutor jse = (JavascriptExecutor)driver;
+            jse.executeScript("var ajaxhook = document.createElement('script');  \n" +
+                    "ajaxhook.src = 'https://unpkg.com/ajax-hook/dist/ajaxhook.min.js';\n" +
+                    "document.getElementsByTagName('head')[0].appendChild(ajaxhook);");
+            jse.executeScript("var div = $(\"<div></div>\");\n" +
+                    "div.attr(\"id\",\"my_data\");\n" +
+                    "$(\"body\").append(div);div.text(\"456\");\n");
+            Thread.sleep(3000);
+            jse.executeScript("\n" +
+                    "hookAjax({\n" +
+                    "  //拦截回调\n" +
+                    "  onreadystatechange:function(xhr){\n" +
+                    "    console.log(\"onreadystatechange called: %O\",xhr)\n" +
+                    "\tconsole.log(\"onreadystatechange called1223: %O\",xhr.status)\n" +
+                    "\t if(xhr.status == 200){\n" +
+                    "\t\tconsole.log(\"onreadystatechange called1223142857: %O\",xhr.responseText)\n" +
+                    "\t }\n" +
+                    "  },\n" +
+                    "  onload:function(xhr){\n" +
+                    "    console.log(\"onload called: %O\",xhr)\n" +
+                    "\tconsole.log(\"onload called:1223: %O\",xhr.status)\n" +
+                    "\t if(xhr.status == 200){\n" +
+                    "\t \n" +
+                    "\t $(\"#my_data\").html(xhr.responseText)\n" +
+                    "\t\tconsole.log(\"onload called:1223142857: %O\",xhr.responseText)\n" +
+                    "\t }\n" +
+                    "  },\n" +
+                    "  //拦截方法\n" +
+                    "  open:function(arg,xhr){\n" +
+                    "    console.log(\"open called: method:%s,url:%s,async:%s\",arg[0],arg[1],arg[2])\n" +
+                    "  }\n" +
+                    "})");
+            Thread.sleep(3000);
+            driver.findElement(By.cssSelector("li.right > a.ng-binding")).click();
+            Thread.sleep(30000);
+            String title = (String) jse.executeScript("return $(\"#my_data\").html()");
+            System.out.println("current page title get by js: " + title);
+            screen((TakesScreenshot) driver);
 //            driver.findElement(By.linkText("搜尋")).click();
 //            Thread.sleep(20000);
 //            System.out.println(driver.getTitle());
@@ -220,10 +269,12 @@ public class ChromeApplication {
 //            jse.executeScript("window.document.getElementById('oneWay').click()");
 //            //searchCtl.search()
 //            jse.executeScript("searchCtl.search()");
+
 //            Thread.sleep(20000);
 
 //            System.out.println(driver.findElement(By.cssSelector("div.vnl-search-submit > a")).getText());
         } catch (Exception e) {
+            screen((TakesScreenshot) driver);
             e.printStackTrace();
         }
 
