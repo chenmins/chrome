@@ -5,10 +5,13 @@ import bsh.Interpreter;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -25,10 +28,21 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 public class ChromeApplication {
+    public static boolean doesWebElementExist(WebDriver driver, By selector)
+    {
 
+        try
+        {
+            driver.findElement(selector);
+            return true;
+        }
+        catch (NoSuchElementException e)
+        {
+            return false;
+        }
+    }
     public static WebDriver getLocalPhantomjs(){
         WebDriverManager.phantomjs().useMirror().setup();
-
         DesiredCapabilities dc =  DesiredCapabilities.phantomjs();
         dc.setCapability("phantomjs.page.settings.userAgent",
                 "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36");
@@ -112,7 +126,7 @@ public class ChromeApplication {
     }
 
     public static WebDriver getChrome()throws Exception {
-
+        WebDriverManager.chromedriver().useMirror().setup();
         DesiredCapabilities capabilities= DesiredCapabilities.chrome();
 
         HashMap<String, Object> images = new HashMap<String, Object>();
@@ -121,7 +135,7 @@ public class ChromeApplication {
         prefs.put("profile.default_content_setting_values", images);
 
         ChromeOptions options= new ChromeOptions();
-        options.setHeadless(true);
+//        options.setHeadless(true);
         options.addArguments("--test-type --no-sandbox");
 //        options.addArguments("--test-type --no-sandbox --headless --disable-gpu");
         options.addArguments("--enable-strict-powerful-feature-restrictions");
@@ -151,7 +165,24 @@ public class ChromeApplication {
 //        WebDriver driver = new RemoteWebDriver( new URL("http://127.0.0.1:9515"), capabilities);
 //        WebDriver driver = new RemoteWebDriver( new URL("http://192.168.169.57:9515"), capabilities);
 //        WebDriver driver = new RemoteWebDriver( new URL("http://106.12.211.88:9515"), capabilities);
-        WebDriver driver = new RemoteWebDriver( new URL("http://47.74.6.128:9515"), capabilities);
+//        WebDriver driver = new RemoteWebDriver( new URL("http://47.74.6.128:9515"), capabilities);
+
+//
+//        // 设置对谷歌浏览器的初始配置           开始
+//        HashMap<String, Object> prefs = new HashMap<String, Object>();
+//        //设置禁止图片
+//        //prefs.put("profile.managed_default_content_settings.images", 2);
+//        //设置禁止cookies
+//        //prefs.put("profile.default_content_settings.cookies", 2);
+//        ChromeOptions options = new ChromeOptions();
+//        options.setExperimentalOption("prefs", prefs);
+//        DesiredCapabilities chromeCaps = DesiredCapabilities.chrome();
+//        chromeCaps.setCapability(ChromeOptions.CAPABILITY, options);
+//        // 设置对谷歌浏览器的初始配置           结束
+
+        //新建一个谷歌浏览器对象（driver）
+        WebDriver driver = new ChromeDriver(capabilities);
+
         return driver;
     }
 
@@ -159,8 +190,8 @@ public class ChromeApplication {
 
 
         SpringApplication.run(ChromeApplication.class, args);
-//        WebDriver  driver = getChrome();
-        WebDriver  driver = getPhantomjs();
+        WebDriver  driver = getChrome();
+//        WebDriver  driver = getPhantomjs();
 //        WebDriver  driver = getLocalPhantomjs();
 
 
@@ -207,8 +238,14 @@ public class ChromeApplication {
             driver.findElement(By.id("edit-submit-ticket")).click();
 //
 //            Thread.sleep(5000);
-            driver.findElement(By.cssSelector("div.vnl-search-submit > a")).click();
-            Thread.sleep(3000);
+            if(doesWebElementExist(driver,By.cssSelector("div.vnl-search-submit > a"))){
+                driver.findElement(By.cssSelector("div.vnl-search-submit > a")).click();
+            }
+//            Thread.sleep(3000);
+            WebDriverWait wait = new WebDriverWait(driver, 5);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#openLoginForm")));
+            WebElement element = driver.findElement(By.cssSelector("#openLoginForm"));
+            System.out.println("e:"+element.getText());
             JavascriptExecutor jse = (JavascriptExecutor)driver;
             jse.executeScript("var ajaxhook = document.createElement('script');  \n" +
                     "ajaxhook.src = 'https://unpkg.com/ajax-hook/dist/ajaxhook.min.js';\n" +
@@ -216,7 +253,7 @@ public class ChromeApplication {
             jse.executeScript("var div = $(\"<div></div>\");\n" +
                     "div.attr(\"id\",\"my_data\");\n" +
                     "$(\"body\").append(div);div.text(\"456\");\n");
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             jse.executeScript("\n" +
                     "hookAjax({\n" +
                     "  //拦截回调\n" +
@@ -242,8 +279,8 @@ public class ChromeApplication {
                     "  }\n" +
                     "})");
             Thread.sleep(3000);
-            driver.findElement(By.cssSelector("li.right > a.ng-binding")).click();
-            Thread.sleep(30000);
+//            driver.findElement(By.cssSelector("li.right > a.ng-binding")).click();
+//            Thread.sleep(30000);
             String title = (String) jse.executeScript("return $(\"#my_data\").html()");
             System.out.println("current page title get by js: " + title);
             screen((TakesScreenshot) driver);
